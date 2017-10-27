@@ -1,0 +1,3 @@
+param1: iPhone_6S iPhone_6S_Plus iPhone_7 iPad_Air iPad_Pro_2’
+param2: iOS_9 iOS_10 iOS_11
+param3: Chrome Safari Opera
