@@ -116,7 +116,7 @@ class TestOptimization(object):
 
         solution = {}
 
-        for combo in TestOptimization.combinations:
+        for combo in self.combinations:
             if pulp.value(combination_decisions[combo]) > 0.5:
                 solution[combo] = True
             else:

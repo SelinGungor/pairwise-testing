@@ -13,8 +13,9 @@ import codecs
 import pandas as pd
 import sys
 import io
-
+import charts.backends.Calculate as calc
 User = get_user_model()
+params = []
 
 class HomeView(View):
     def get(self, request):
@@ -45,11 +46,14 @@ def upload_file(request):
             parameters = populate_file('data.csv')
             print(type(parameters))
             print(parameters)
+            params = parameters
+            c = calc.Calculate(parameters)
+            proposal = c.get_proposal_with_linear_programming(parameters)
+            print(proposal)
             return render(request, "charts.html", {'form': form})
     else:
         form = UploadFileForm()
     return render(request, 'home.html', {'form': form})
-
 
 def populate_file(my_file):
     my_parameter_list = []
@@ -59,32 +63,14 @@ def populate_file(my_file):
             my_parameter_list.append(row)
     return my_parameter_list
 
+
 def handle_uploaded_file(f):
     with open(f, 'wb+') as destination:
         for chunk in f.chunks():
             destination.write(chunk)
 
-# def upload_csv(request):
-#     if request.POST and request.FILES:
-#         csv_file = request.FILES['csv_file']
-#         if not csv_file.name.endswith('.csv'):
-#             messages.error(request, 'File is not CSV type')
-#             return HttpResponseRedirect(reverse("home"))
-#         #look
-#         with open(csv_file, 'r') as f:
-#             reader = csv.reader(f)
-#             your_list = list(reader)
-#
-#         print(your_list)
-#         # my_csv = pd.read_csv(csv_file, header=None, sep=" ", error_bad_lines=False)
-#     return render(request, "charts.html", locals())
 
-# def techniques(request):
-#   if request.method == 'POST':
-#     form = YourForm(request.POST)
-#
-#     if form.is_valid():
-#       answer = form.cleaned_data['value']
+
 
 class ChartData(APIView):
     authentication_classes = []
