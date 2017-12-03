@@ -125,6 +125,14 @@ function setChart(){
 
 
     </div>
-</div>
+    <div>
+        <h4>Number of Test Cases: </h4>
+        {{ number_of_test_cases }}
+    <h4>Proposed Test Cases: </h4>
+    {% for prop in proposals %}
+    {{ prop|linebreaks }}
+    {% endfor %}
+    </div>
 
+</div>
 {% endblock content %}

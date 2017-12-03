@@ -16,13 +16,14 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 
-from .views import HomeView, get_data, ChartData, upload_file
+from .views import HomeView, get_data, ChartData, upload_file, show_data
 
 
 urlpatterns = [
     url(r'^$', HomeView.as_view(), name='home'),
     url(r'^api/data/$', get_data, name='api-data'),
     url(r'^upload/csv/$', upload_file, name='upload_csv'),
+    url(r'^chart/$', show_data, name='show_data'),
     url(r'^api/chart/data/$', ChartData.as_view()),
     url(r'^admin/', admin.site.urls),
 ]

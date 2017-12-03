@@ -16,6 +16,7 @@ import io
 import charts.backends.Calculate as calc
 User = get_user_model()
 params = []
+proposal_result = []
 
 class HomeView(View):
     def get(self, request):
@@ -49,8 +50,13 @@ def upload_file(request):
             params = parameters
             c = calc.Calculate(parameters)
             proposal = c.get_proposal_with_linear_programming(parameters)
-            print(proposal)
-            return render(request, "charts.html", {'form': form})
+            proposal_result = proposal
+            print(proposal_result)
+            number_of_test_cases = sum(proposal_result.values())
+            args = {'form': form,
+                    'proposals':proposal_result,
+                    'number_of_test_cases':number_of_test_cases}
+            return render(request, "charts.html", args)
     else:
         form = UploadFileForm()
     return render(request, 'home.html', {'form': form})
@@ -69,7 +75,8 @@ def handle_uploaded_file(f):
         for chunk in f.chunks():
             destination.write(chunk)
 
-
+def show_data(request):
+    pass
 
 
 class ChartData(APIView):
