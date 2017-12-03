@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+<script>
+</script>
+
+<h1>Generate My Pairs</h1>
+<form action="{% url 'upload_csv' %}" method="post" enctype="multipart/form-data">{% csrf_token %}
+
+    <input type="file" name="csv_file" />
+    <input type="submit" value="Upload" />
+
+</form>

@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+<script>
+</script>
+{% block content %}
+<h1>Generate My Pairs</h1>
+<!--<form action="{% url 'home' %}" method="post" enctype="multipart/form-data">{% csrf_token %}-->
+
+    <!--<input type="file" name="csv_file" />-->
+    <!--<input type="submit" value="Upload" />-->
+
+<!--</form>-->
+
+<form action="{% url 'upload_csv' %}" method="POST" enctype="multipart/form-data" class="form-horizontal">
+{% csrf_token %}
+     {{ form.as_p }}
+    {{ form.media }}
+<div class="form-group">
+         <button class="btn btn-primary"> <span class="glyphicon glyphicon-upload" style="margin-right:5px;"></span>Upload </button>
+</div>
+</form>
+{% endblock content %}
