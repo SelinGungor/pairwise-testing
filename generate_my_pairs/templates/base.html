@@ -6,8 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>Generate My Pairs</title>
+{# Load the tag library #}
+{% load bootstrap4 %}
+
+{# Load CSS and JavaScript #}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
 
     {% include 'base/css.html' %}
+    {% include 'base/js.html' %}
     {% include 'base/bootstrap_defaults.html' %}
   </head>
   <body>

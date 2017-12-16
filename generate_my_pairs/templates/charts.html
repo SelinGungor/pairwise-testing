@@ -1,4 +1,10 @@
 {% extends 'base.html' %}
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>-->
+<!--<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>-->
+<!--<link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/v/dt/jq-3.2.1/jszip-2.5.0/dt-1.10.16/b-1.5.0/b-html5-1.5.0/b-print-1.5.0/r-2.2.1/datatables.min.css"/>-->
+<!--<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js"></script>-->
+<!--<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>-->
+<!--<script type="text/javascript" src="http://cdn.datatables.net/v/dt/jq-3.2.1/jszip-2.5.0/dt-1.10.16/b-1.5.0/b-html5-1.5.0/b-print-1.5.0/r-2.2.1/datatables.min.js"></script>-->
 
 <script>
 {% block jquery %}
@@ -105,34 +111,177 @@ function setChart(){
 
 
 {% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
 </script>
 
 {% block content %}
-<form action="Techniques" method="post">
-  <select >
-    <option selected="selected" disabled>Techniques :</option>
-    <option value="simulated_annealing">Simulated Annealing</option>
-    <option value="linear_programming">Linear Programming</option>
-  </select>
-  <input type="submit" value="Show">
-</form>
 <div class='row'>
     <div class='col-sm-12' url-endpoint='{% url "api-data" %}'>
         <h1>Generate My Pairs</h1>
-        <div class='col-sm-6'>
-            <canvas id="myChart" width="400" height="400"></canvas>
-        </div>
-
-
+        <!--<div class='col-sm-6'>-->
+        <!--<canvas id="myChart" width="400" height="400"></canvas>-->
+        <!--</div>-->
     </div>
-    <div>
-        <h4>Number of Test Cases: </h4>
-        {{ number_of_test_cases }}
-    <h4>Proposed Test Cases: </h4>
-    {% for prop in proposals %}
-    {{ prop|linebreaks }}
-    {% endfor %}
-    </div>
+    <form action="Techniques" method="post">
+        <select>
+            <option selected="selected" disabled>Techniques :</option>
+            <option value="simulated_annealing">Simulated Annealing</option>
+            <option value="linear_programming">Linear Programming</option>
+        </select>
+        <input type="submit" value="Show">
+    </form>
+    <!--<div>-->
+    <!--<h4>Number of Test Cases: </h4>-->
+    <!--{{ number_of_test_cases }}-->
+    <!--<h4>Proposed Test Cases: </h4>-->
+    <!--{% for prop in proposals %}-->
+    <!--{{ prop|linebreaks }}-->
+    <!--{% endfor %}-->
+    <!--</div>-->
 
 </div>
+<style>
+    .red {
+        background-color: red!important;
+    }
+    .green {
+        background-color: green!important;
+    }
+
+</style>
+<script type="text/javascript">
+var tags = ["Not Executed", "Passed", "Failed"];
+var statusIndex = 0;
+$(document).ready(function() {
+    var table = $('#testcases').DataTable({
+    dom: 'Bfrtip',
+    buttons: [
+            {
+                extend: 'pdfHtml5',
+                exportOptions: { orthogonal: 'export' },
+                customize: function(doc) {
+                    for (var r=1;r<doc.content[1].table.body.length;r++) {
+                        var row = doc.content[1].table.body[r];
+                        for (c=0;c<row.length;c++) {
+                        debugger;
+                            var exportColor = table
+                                                .cell( {row: r-1, column: c} )
+                                                .nodes()
+                                                .to$()
+                                                .attr('export-color');
+                            if (exportColor) {
+                                row[c].fillColor = exportColor;
+                            }
+                        }
+                    }
+                }
+            }
+        ],
+    "columns":[
+        	{
+            	"render": function(data, type, row){
+            	    var status_id =  "status" + statusIndex;
+                	var $select = $("<select></select>", {
+                    	"id": status_id,
+                        "value": data
+                    });
+                	$.each(tags, function(index,value){
+                    	var $option = $("<option></option>", {
+                        	"text": value,
+                            "value": value
+                        });
+                        if(data === value){
+                        	$option.attr("selected", "selected")
+                        }
+                    	$select.append($option);
+                    });
+                    if(type === 'export') {
+                        return $select.find("option:selected").attr('value');
+                    } else {
+                        return $select.prop("outerHTML");
+                    }
+                }
+            }, null],
+            "initComplete": function(settings, json) {
+                $("select").on('change', function() {
+                        var elem = $(this);
+                        var firstParent = elem.parent();
+                        var parent = elem.parent().parent();
+                        var value = elem.find("option:selected").attr('value');
+                        switch(value) {
+                            case tags[0]:
+                                parent.removeClass("red");
+                                parent.removeClass("green");
+                                firstParent.removeClass("red");
+                                firstParent.removeClass("green");
+                                break;
+                            case tags[1]:
+                                parent.addClass("green");
+                                parent.removeClass("red");
+                                firstParent.addClass("green");
+                                firstParent.removeClass("red");
+                                break;
+                            case tags[2]:
+                                    parent.addClass("red");
+                                parent.removeClass("green");
+                                firstParent.addClass("red");
+                                firstParent.removeClass("green");
+                                break;
+                    }});
+            }
+    });
+
+    $('#button').click( function () {
+        alert( table.rows('.selected').data().length +' row(s) selected' );
+    } );
+} );
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+<table id="testcases" class="display" cellspacing="0" width="100%">
+    <thead>
+    <h4>Number of Test Cases: {{ number_of_test_cases }}</h4>
+
+    <tr>
+        <th>Status</th>
+        <th>Proposed Test Cases:</th>
+    </tr>
+    </thead>
+    <tfoot>
+    <tr>
+        <th>Status</th>
+        <th>Name</th>
+    </tr>
+    </tfoot>
+    <tbody>
+    {% for prop in proposals %}
+    <tr>
+        <td>Not Executed</td>
+        <td>{{ prop}}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
 {% endblock content %}
