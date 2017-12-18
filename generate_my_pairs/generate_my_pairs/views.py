@@ -9,14 +9,16 @@ from rest_framework.response import Response
 from django.shortcuts import render, reverse
 import csv
 from generate_my_pairs.forms import UploadFileForm
-import codecs
+from generate_my_pairs.models import Post
 import pandas as pd
 import sys
-import io
+import os
 import charts.backends.Calculate as calc
+
 User = get_user_model()
 params = []
 proposal_result = []
+
 
 class HomeView(View):
     def get(self, request):
@@ -36,30 +38,45 @@ def get_data(request, *args, **kwargs):
         "sales": 100,
         "customers": 10,
     }
-    return JsonResponse(data) # http response
+    return JsonResponse(data)  # http response
 
 
 def upload_file(request):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
+            posts = Post.objects.all()
+            for x in posts:
+                print("Selin : " +str(x))
+            myyfile = request.FILES['file']
+            print("Deniz : " + str(myyfile.name))
+            print(str(myyfile))
+            print(type(myyfile))
+            handle_uploaded_file(myyfile, "data.csv")
             form.save()
-            parameters = populate_file('data.csv')
+            parameters = populate_file("data.csv")
+
+            # if file:
+            #     print ("**found file" + file.filename)
+            #     filename = secure_filename(file.filename)
+            #     file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             print(type(parameters))
             print(parameters)
             params = parameters
             c = calc.Calculate(parameters)
             proposal = c.get_proposal_with_linear_programming(parameters)
+            print("proposalllllll  :  "+ str(proposal.values()))
             proposal_result = proposal
             print(proposal_result)
             number_of_test_cases = sum(proposal_result.values())
             args = {'form': form,
-                    'proposals':proposal_result,
-                    'number_of_test_cases':number_of_test_cases}
+                    'proposals': proposal_result,
+                    'number_of_test_cases': number_of_test_cases}
             return render(request, "charts.html", args)
     else:
         form = UploadFileForm()
     return render(request, 'home.html', {'form': form})
+
 
 def populate_file(my_file):
     my_parameter_list = []
@@ -70,10 +87,11 @@ def populate_file(my_file):
     return my_parameter_list
 
 
-def handle_uploaded_file(f):
-    with open(f, 'wb+') as destination:
+def handle_uploaded_file(f, filename):
+    with open(filename, 'wb+') as destination:
         for chunk in f.chunks():
             destination.write(chunk)
+
 
 def show_data(request):
     pass
@@ -88,8 +106,7 @@ class ChartData(APIView):
         labels = ["Users", "Blue", "Yellow", "Green", "Purple", "Orange"]
         default_items = [qs_count, 23, 2, 3, 12, 2]
         data = {
-                "labels": labels,
-                "default": default_items,
+            "labels": labels,
+            "default": default_items,
         }
         return Response(data)
-

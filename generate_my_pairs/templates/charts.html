@@ -169,19 +169,37 @@ $(document).ready(function() {
     buttons: [
             {
                 extend: 'pdfHtml5',
-                exportOptions: { orthogonal: 'export' },
+                exportOptions: { orthogonal: 'export' ,
+                    format: {
+                        body: function(data, row, column, node) {
+                            if (col == 0) {
+                                return table
+                                        .cell( {row: row, column: col} )
+                                        .nodes()
+                                        .to$()
+                                        .find(':selected')
+                                        .text()
+                            } else {
+                                return data;
+                            }
+                        }
+                    }
+                },
                 customize: function(doc) {
                     for (var r=1;r<doc.content[1].table.body.length;r++) {
                         var row = doc.content[1].table.body[r];
-                        for (c=0;c<row.length;c++) {
-                        debugger;
-                            var exportColor = table
-                                                .cell( {row: r-1, column: c} )
-                                                .nodes()
-                                                .to$()
-                                                .attr('export-color');
-                            if (exportColor) {
-                                row[c].fillColor = exportColor;
+                        var classColor = table
+                                            .cell( {row: r-1, column: 0} )
+                                            .nodes()
+                                            .to$()
+                                            .attr('class');
+                        if(classColor != undefined){
+                            if (classColor.indexOf("green") != -1) {
+                                row[0].fillColor = "#008000";
+                                row[1].fillColor = "#008000";
+                            } else if(classColor.indexOf("red") != -1){
+                                row[0].fillColor = "#ff0000";
+                                row[1].fillColor = "#ff0000";
                             }
                         }
                     }

@@ -8,9 +8,10 @@ class Calculate(object):
     def get_proposal_with_linear_programming(self, parameters):
         test_optimization = opt.TestOptimization(parameters)
         proposal = test_optimization.optimize_LP()
-        print({k: v for k, v in proposal.items() if v})
+        clear_proposal = {k: v for k, v in proposal.items() if v}
+        print()
         print('Number of tests', sum(proposal.values()))
-        return proposal
+        return clear_proposal
 
     def get_proposal_with_simulated_annealing(self, parameters):
         test_optimization = opt.TestOptimization(parameters)
