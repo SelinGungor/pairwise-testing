@@ -1,6 +1,6 @@
 numpy==1.13.3
 reportlab==3.4.0
-pandas==0.20.3
-Django==1.11.5
 PuLP==1.6.8
+Django==1.11.5
+pandas==0.20.3
 djangorestframework==3.7.3
