@@ -46,26 +46,17 @@ def upload_file(request):
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
             posts = Post.objects.all()
-            for x in posts:
-                print("Selin : " +str(x))
-            myyfile = request.FILES['file']
-            print("Deniz : " + str(myyfile.name))
-            print(str(myyfile))
-            print(type(myyfile))
-            handle_uploaded_file(myyfile, "data.csv")
-            form.save()
-            parameters = populate_file("data.csv")
+            my_file = request.FILES.getlist('file')
+            handle_uploaded_file(my_file[0], my_file[0].name)
 
-            # if file:
-            #     print ("**found file" + file.filename)
-            #     filename = secure_filename(file.filename)
-            #     file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            parameters = populate_file(my_file[0])
+
             print(type(parameters))
             print(parameters)
             params = parameters
             c = calc.Calculate(parameters)
             proposal = c.get_proposal_with_linear_programming(parameters)
-            print("proposalllllll  :  "+ str(proposal.values()))
+            print("proposalllllll  :  " + str(proposal.values()))
             proposal_result = proposal
             print(proposal_result)
             number_of_test_cases = sum(proposal_result.values())
@@ -80,8 +71,10 @@ def upload_file(request):
 
 def populate_file(my_file):
     my_parameter_list = []
-    with open(my_file, encoding='utf-8', errors='ignore') as my_csv_file:
+    print("file name: " + my_file.name)
+    with open(my_file.name) as my_csv_file:
         file = csv.reader(my_csv_file, delimiter=',')
+        print("cute" + str(my_csv_file))
         for row in file:
             my_parameter_list.append(row)
     return my_parameter_list

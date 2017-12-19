@@ -133,11 +133,10 @@ function setChart(){
         <!--<canvas id="myChart" width="400" height="400"></canvas>-->
         <!--</div>-->
     </div>
-    <form action="Techniques" method="post">
-        <select>
-            <option selected="selected" disabled>Techniques :</option>
-            <option value="simulated_annealing">Simulated Annealing</option>
+    <form action="techniques" id="techniques" method="post">
+        <select id="select_techniques">
             <option value="linear_programming">Linear Programming</option>
+            <option value="simulated_annealing">Simulated Annealing</option>
         </select>
         <input type="submit" value="Show">
     </form>
