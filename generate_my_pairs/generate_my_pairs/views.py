@@ -18,6 +18,8 @@ import charts.backends.Calculate as calc
 User = get_user_model()
 params = []
 proposal_result = []
+uploaded_parameters = None
+form = None
 
 
 class HomeView(View):
@@ -45,14 +47,13 @@ def upload_file(request):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
+            form.save();
             posts = Post.objects.all()
             my_file = request.FILES.getlist('file')
             handle_uploaded_file(my_file[0], my_file[0].name)
 
             parameters = populate_file(my_file[0])
 
-            print(type(parameters))
-            print(parameters)
             params = parameters
             c = calc.Calculate(parameters)
             proposal = c.get_proposal_with_linear_programming(parameters)
@@ -61,6 +62,7 @@ def upload_file(request):
             print(proposal_result)
             number_of_test_cases = sum(proposal_result.values())
             args = {'form': form,
+                    'selected_technique' : "Linear Programming",
                     'proposals': proposal_result,
                     'number_of_test_cases': number_of_test_cases}
             return render(request, "charts.html", args)

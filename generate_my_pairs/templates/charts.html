@@ -133,8 +133,9 @@ function setChart(){
         <!--<canvas id="myChart" width="400" height="400"></canvas>-->
         <!--</div>-->
     </div>
-    <form action="techniques" id="techniques" method="post">
-        <select id="select_techniques">
+    <form action="{% url 'techniques' %}" enctype="multipart/form-data" id="techniques" method="post">
+        {% csrf_token %}
+        <select name="select_techniques">
             <option value="linear_programming">Linear Programming</option>
             <option value="simulated_annealing">Simulated Annealing</option>
         </select>
@@ -278,6 +279,7 @@ $(document).ready(function() {
 </script>
 <table id="testcases" class="display" cellspacing="0" width="100%">
     <thead>
+    <h4>Selected Techique: {{ selected_technique }}     </h4>
     <h4>Number of Test Cases: {{ number_of_test_cases }}</h4>
 
     <tr>

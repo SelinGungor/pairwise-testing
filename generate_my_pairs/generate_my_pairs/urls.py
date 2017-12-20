@@ -17,7 +17,7 @@ from django.conf.urls import url
 from django.contrib import admin
 
 from .views import HomeView, get_data, ChartData, upload_file, show_data
-
+from charts.views import show_diff_tech
 
 urlpatterns = [
     url(r'^$', HomeView.as_view(), name='home'),
@@ -26,4 +26,5 @@ urlpatterns = [
     url(r'^chart/$', show_data, name='show_data'),
     url(r'^api/chart/data/$', ChartData.as_view()),
     url(r'^admin/', admin.site.urls),
+    url(r'^upload/csv/techniques/$', show_diff_tech, name='techniques'),
 ]
